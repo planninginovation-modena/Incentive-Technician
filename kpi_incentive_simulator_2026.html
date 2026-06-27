@@ -1,0 +1,528 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f4f8;color:#1e293b;font-size:13px}
+.app{max-width:1100px;margin:0 auto;padding:16px}
+.header{background:linear-gradient(135deg,#c45c1a 0%,#e07b35 60%,#1a3a5c 100%);border-radius:14px;padding:20px 24px;margin-bottom:14px;color:#fff}
+.header h1{font-size:18px;font-weight:700;margin-bottom:3px}
+.header p{font-size:11px;opacity:.75}
+.tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.tab{padding:8px 14px;border-radius:10px;border:1.5px solid #e2e8f0;background:#fff;font-size:12px;font-weight:600;cursor:pointer;color:#64748b;transition:all .15s;white-space:nowrap}
+.tab.active{background:#c45c1a;color:#fff;border-color:#c45c1a}
+.section{display:none}.section.active{display:block}
+.card{background:#fff;border-radius:12px;border:1px solid #e2e8f0;padding:16px;margin-bottom:12px}
+.card-title{font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+label{display:block;font-size:11px;color:#64748b;margin-bottom:4px;font-weight:500}
+input[type=range]{width:100%;accent-color:#c45c1a}
+select,input[type=number]{width:100%;padding:7px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:12px;background:#f8fafc;color:#1e293b}
+select:focus,input[type=number]:focus{outline:none;border-color:#c45c1a}
+.stat-box{background:#fff;border-radius:10px;border:1px solid #e2e8f0;padding:12px;text-align:center}
+.stat-val{font-size:20px;font-weight:800;margin-bottom:2px}
+.stat-lbl{font-size:10px;color:#94a3b8}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600}
+.g{background:#dcfce7;color:#166534}
+.y{background:#fef9c3;color:#854d0e}
+.r{background:#fee2e2;color:#991b1b}
+.b{background:#dbeafe;color:#1e40af}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{background:#1a3a5c;color:#fff;padding:7px 8px;text-align:left;font-weight:600;font-size:10px}
+th:not(:first-child){text-align:center}
+td{padding:6px 8px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+td:not(:first-child){text-align:center}
+tr:hover td{background:#f8fafc}
+tr:last-child td{border:none;font-weight:700;background:#f1f5f9}
+.bar-wrap{background:#e2e8f0;border-radius:4px;height:5px;margin-top:3px;overflow:hidden;min-width:60px}
+.bar{height:100%;border-radius:4px;transition:width .4s}
+.kpi-card{border-radius:10px;padding:14px;border-left:4px solid transparent}
+.kpi-ok{background:#f0fdf4;border-color:#16a34a}
+.kpi-warn{background:#fefce8;border-color:#eab308}
+.kpi-bad{background:#fff1f2;border-color:#dc2626}
+.kpi-title{font-size:12px;font-weight:700;margin-bottom:4px}
+.kpi-val{font-size:22px;font-weight:800;margin-bottom:2px}
+.kpi-target{font-size:10px;color:#64748b}
+.formula-box{background:#1a3a5c;color:#fff;border-radius:10px;padding:12px 16px;font-size:11px;line-height:1.7}
+.formula-box span{color:#f59e0b;font-weight:600}
+.inc-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:11px}
+.inc-row:last-child{border:none}
+.inc-lbl{color:#64748b}
+.inc-val{font-weight:700}
+.total-bar{background:linear-gradient(135deg,#c45c1a,#e07b35);border-radius:10px;padding:16px;color:#fff;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px}
+.tb-item{text-align:center}
+.tb-val{font-size:22px;font-weight:800;margin-bottom:2px}
+.tb-lbl{font-size:10px;opacity:.75}
+.filter-bar{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.filter-bar select{width:auto;min-width:140px}
+.filter-bar input[type=text]{width:auto;min-width:180px;padding:7px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:12px}
+.note{background:#fef3c7;border-left:3px solid #f59e0b;padding:8px 12px;border-radius:0 8px 8px 0;font-size:11px;line-height:1.6;margin-bottom:10px;color:#78350f}
+.sc-selector{margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="header">
+  <h1>📊 Simulator KPI & Incentive Teknisi 2026 — MODENA After Sales</h1>
+  <p>Berdasarkan data aktual Feb–Mei 2026 · 31 Service Center · KPI Target 2026 + Skema Incentive Existing</p>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('overview')">📈 Overview Nasional</button>
+  <button class="tab" onclick="switchTab('sc')">🏢 Per Service Center</button>
+  <button class="tab" onclick="switchTab('incentive')">💰 Simulasi Incentive</button>
+  <button class="tab" onclick="switchTab('kpi2026')">🎯 KPI 2026</button>
+</div>
+
+<!-- TAB 1: OVERVIEW -->
+<div id="sec-overview" class="section active">
+  <div class="note">⚠️ <strong>Disclaimer:</strong> RON yang diterima setiap cabang berbeda-beda dan di luar kendali perusahaan (tergantung request konsumen). Data Feb–Mei 2026 = 4 bulan. WO = RON.</div>
+  
+  <div class="total-bar">
+    <div class="tb-item"><div class="tb-val">25.377</div><div class="tb-lbl">Total RON Diterima (4 bln)</div></div>
+    <div class="tb-item"><div class="tb-val">21.210</div><div class="tb-lbl">Total RON Complete</div></div>
+    <div class="tb-item"><div class="tb-val">83.6%</div><div class="tb-lbl">Overall Closing Rate</div></div>
+  </div>
+
+  <div class="grid4" style="margin-bottom:12px">
+    <div class="stat-box"><div class="stat-val" style="color:#c45c1a">6.344</div><div class="stat-lbl">Avg RON/bulan (nasional)</div></div>
+    <div class="stat-box"><div class="stat-val" style="color:#16a34a">83.6%</div><div class="stat-lbl">Closing Rate aktual</div></div>
+    <div class="stat-box"><div class="stat-val" style="color:#1a3a5c">31</div><div class="stat-lbl">Service Center aktif</div></div>
+    <div class="stat-box"><div class="stat-val" style="color:#7c3aed">438</div><div class="stat-lbl">Avg RON 1Plus1</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="dot" style="background:#c45c1a"></div>Ranking Service Center — Volume RON & Closing Rate (Feb–Mei 2026)</div>
+    <div class="filter-bar">
+      <input type="text" id="search-sc" placeholder="🔍 Cari service center..." oninput="filterTable()">
+      <select id="sort-by" onchange="filterTable()">
+        <option value="ron">Sort: Total RON ↓</option>
+        <option value="closing">Sort: Closing Rate ↓</option>
+        <option value="complete">Sort: Complete ↓</option>
+        <option value="1p1">Sort: RON 1Plus1 ↓</option>
+      </select>
+    </div>
+    <div style="overflow-x:auto">
+      <table id="main-table">
+        <thead>
+          <tr>
+            <th style="width:160px">Service Center</th>
+            <th>RON Diterima</th>
+            <th>RON Complete</th>
+            <th>Closing Rate</th>
+            <th>vs Target 80%</th>
+            <th>RON 1Plus1</th>
+            <th>Avg RON/bln</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="main-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 2: PER SC -->
+<div id="sec-sc" class="section">
+  <div class="grid2">
+    <div>
+      <div class="card">
+        <div class="card-title"><div class="dot" style="background:#c45c1a"></div>Pilih Service Center</div>
+        <select id="sc-select" onchange="renderSC()">
+          <option value="">— Pilih SC —</option>
+        </select>
+      </div>
+      <div id="sc-kpi-cards" class="grid2" style="gap:10px;margin-bottom:12px"></div>
+    </div>
+    <div>
+      <div class="card" id="sc-detail-card">
+        <div class="card-title"><div class="dot" style="background:#1a3a5c"></div>Detail Data</div>
+        <p style="font-size:11px;color:#94a3b8">Pilih service center untuk melihat detail</p>
+      </div>
+    </div>
+  </div>
+  <div id="sc-incentive-sim" class="card" style="display:none">
+    <div class="card-title"><div class="dot" style="background:#16a34a"></div>Simulasi Incentive SC Terpilih</div>
+    <div id="sc-inc-content"></div>
+  </div>
+</div>
+
+<!-- TAB 3: INCENTIVE -->
+<div id="sec-incentive" class="section">
+  <div class="note">Skema incentive existing per tabel: Work Category (per WO) + Sell Out (% dari nilai jual). Rata-rata pendapatan existing: <strong>Rp 325.000/teknisi/bulan</strong>. Simulator ini menghitung potensi incentive berdasarkan volume RON aktual cabang.</div>
+
+  <div class="grid2">
+    <div>
+      <div class="card">
+        <div class="card-title"><div class="dot" style="background:#c45c1a"></div>Parameter Incentive (Skema Existing)</div>
+        <div style="margin-bottom:10px">
+          <label>Rata-rata % WO Light (Rp 6.000/WO)</label>
+          <div style="display:flex;align-items:center;gap:8px"><input type="range" id="r-light" min="0" max="80" value="40" oninput="calcInc()"><span id="v-light" style="font-weight:700;min-width:35px">40%</span></div>
+        </div>
+        <div style="margin-bottom:10px">
+          <label>Rata-rata % WO Medium (Rp 6.000/WO)</label>
+          <div style="display:flex;align-items:center;gap:8px"><input type="range" id="r-medium" min="0" max="60" value="35" oninput="calcInc()"><span id="v-medium" style="font-weight:700;min-width:35px">35%</span></div>
+        </div>
+        <div style="margin-bottom:10px">
+          <label>Rata-rata % WO Heavy (Rp 15.000/WO)</label>
+          <div style="display:flex;align-items:center;gap:8px"><input type="range" id="r-heavy" min="0" max="40" value="20" oninput="calcInc()"><span id="v-heavy" style="font-weight:700;min-width:35px">20%</span></div>
+        </div>
+        <div style="margin-bottom:10px">
+          <label>Rata-rata % WO Survey (Rp 1.000/WO)</label>
+          <div style="display:flex;align-items:center;gap:8px"><input type="range" id="r-survey" min="0" max="30" value="5" oninput="calcInc()"><span id="v-survey" style="font-weight:700;min-width:35px">5%</span></div>
+        </div>
+        <div style="margin-bottom:10px">
+          <label>KKS Sell Out (10% dari harga KKS) — avg Rp KKS</label>
+          <input type="number" id="n-kks-price" value="350000" oninput="calcInc()">
+        </div>
+        <div style="margin-bottom:10px">
+          <label>% RON yang berhasil sell KKS</label>
+          <div style="display:flex;align-items:center;gap:8px"><input type="range" id="r-kks-rate" min="0" max="50" value="15" oninput="calcInc()"><span id="v-kks-rate" style="font-weight:700;min-width:35px">15%</span></div>
+        </div>
+        <div>
+          <label>Jumlah teknisi per SC (rata-rata)</label>
+          <div style="display:flex;align-items:center;gap:8px"><input type="range" id="r-tek-per-sc" min="1" max="20" value="5" oninput="calcInc()"><span id="v-tek-per-sc" style="font-weight:700;min-width:25px">5</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="card-title"><div class="dot" style="background:#16a34a"></div>Hasil Simulasi Incentive</div>
+        <div id="inc-result"></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="dot" style="background:#1a3a5c"></div>Formula Incentive per WO</div>
+        <div class="formula-box">
+          Incentive/WO = <span>Kategori WO</span><br>
+          Survey: <span>Rp 1.000</span> | Light: <span>Rp 6.000</span><br>
+          Medium: <span>Rp 6.000</span> | Heavy: <span>Rp 15.000</span><br>
+          Pameran: <span>Rp 24.000</span><br><br>
+          Sell Out KKS: <span>10%</span> dari nilai kontrak<br>
+          Accessories: <span>10%</span> dari nilai jual<br><br>
+          Existing avg: <span>Rp 325.000/teknisi/bln</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="dot" style="background:#7c3aed"></div>Proyeksi Incentive per Service Center (berdasarkan avg RON/bulan)</div>
+    <div style="overflow-x:auto"><table id="inc-table">
+      <thead><tr>
+        <th>Service Center</th><th>Avg RON/bln</th><th>Est. Incentive WO/bln</th>
+        <th>Est. Incentive KKS/bln</th><th>Total/teknisi/bln</th><th>vs Existing (325K)</th>
+      </tr></thead>
+      <tbody id="inc-tbody"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- TAB 4: KPI 2026 -->
+<div id="sec-kpi2026" class="section">
+  <div class="note">🎯 <strong>KPI Target 2026:</strong> RTAT ≤ 2.35 hari · Sameday Repair ≥ 35% · Closing Rate ≥ 80% · Pending Rate ≤ 15%</div>
+
+  <div class="card">
+    <div class="card-title"><div class="dot" style="background:#c45c1a"></div>Simulasi Gap Analysis — Closing Rate Aktual vs Target 2026</div>
+    <div class="grid2" style="gap:10px;margin-bottom:14px">
+      <div>
+        <label>Asumsi Sameday Repair aktual rata-rata (%)</label>
+        <div style="display:flex;align-items:center;gap:8px"><input type="range" id="r-sameday-sim" min="0" max="100" value="38" oninput="calcKPI2026()"><span id="v-sameday-sim" style="font-weight:700;min-width:35px">38%</span></div>
+      </div>
+      <div>
+        <label>Asumsi RTAT aktual (hari)</label>
+        <div style="display:flex;align-items:center;gap:8px"><input type="range" id="r-rtat-sim" min="1" max="10" value="3" step="0.1" oninput="calcKPI2026()"><span id="v-rtat-sim" style="font-weight:700;min-width:40px">3.0</span></div>
+      </div>
+      <div>
+        <label>Asumsi Pending Rate aktual (%)</label>
+        <div style="display:flex;align-items:center;gap:8px"><input type="range" id="r-pending-sim" min="0" max="40" value="18" oninput="calcKPI2026()"><span id="v-pending-sim" style="font-weight:700;min-width:35px">18%</span></div>
+      </div>
+    </div>
+    <div class="grid4" id="kpi2026-cards"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="dot" style="background:#1a3a5c"></div>Status Gap per Service Center — Closing Rate vs Target 80%</div>
+    <div class="grid2" style="gap:8px;margin-bottom:6px">
+      <div style="background:#dcfce7;border-radius:8px;padding:10px;font-size:11px">
+        <strong style="color:#166534">✅ Sudah ≥ 80%</strong>
+        <div id="sc-above-target" style="margin-top:6px;color:#166534"></div>
+      </div>
+      <div style="background:#fee2e2;border-radius:8px;padding:10px;font-size:11px">
+        <strong style="color:#991b1b">❌ Belum ≥ 80% — Perlu Perhatian</strong>
+        <div id="sc-below-target" style="margin-top:6px;color:#991b1b"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><div class="dot" style="background:#7c3aed"></div>Rekomendasi Alignment KPI 2026 dengan Skema Incentive</div>
+    <div id="rec-alignment"></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const SC = [
+  {n:"SC ACEH",ron:421,reg:420,comp:385,compReg:384,p1:1,avgComp:96.25,avgBef:96},
+  {n:"SC BALI",ron:795,reg:790,comp:633,compReg:628,p1:5,avgComp:158.25,avgBef:157},
+  {n:"SC BANDUNG",ron:2052,reg:1954,comp:1832,compReg:1729,p1:102,avgComp:458,avgBef:432.25},
+  {n:"SC BANJARMASIN",ron:365,reg:346,comp:339,compReg:320,p1:17,avgComp:84.75,avgBef:80},
+  {n:"SC BATAM",ron:452,reg:451,comp:400,compReg:399,p1:0,avgComp:100,avgBef:99.75},
+  {n:"SC JAKARTA 1",ron:2300,reg:2268,comp:1919,compReg:1887,p1:31,avgComp:479.75,avgBef:471.75},
+  {n:"SC JAKARTA 2",ron:2633,reg:2595,comp:2072,compReg:2034,p1:34,avgComp:518,avgBef:508.5},
+  {n:"SC JAKARTA 3",ron:3057,reg:3026,comp:2686,compReg:2652,p1:32,avgComp:671.5,avgBef:663},
+  {n:"SC JAKARTA 4",ron:93,reg:90,comp:66,compReg:63,p1:3,avgComp:16.5,avgBef:15.75},
+  {n:"SC KEDIRI",ron:239,reg:222,comp:221,compReg:204,p1:17,avgComp:55.25,avgBef:51},
+  {n:"SC LAMPUNG",ron:124,reg:122,comp:86,compReg:84,p1:0,avgComp:21.5,avgBef:21},
+  {n:"SC MAKASSAR",ron:943,reg:908,comp:832,compReg:797,p1:34,avgComp:208,avgBef:199.25},
+  {n:"SC MALANG",ron:442,reg:436,comp:406,compReg:400,p1:5,avgComp:101.5,avgBef:100},
+  {n:"SC MANADO",ron:182,reg:176,comp:148,compReg:142,p1:6,avgComp:37,avgBef:35.5},
+  {n:"SC MEDAN",ron:733,reg:719,comp:606,compReg:592,p1:14,avgComp:151.5,avgBef:148},
+  {n:"SC MSC BOGOR",ron:787,reg:787,comp:644,compReg:644,p1:0,avgComp:161,avgBef:161},
+  {n:"SC MSC GREENLAKE",ron:1049,reg:1042,comp:863,compReg:856,p1:6,avgComp:215.75,avgBef:214},
+  {n:"SC MSC KBP BANDUNG",ron:393,reg:375,comp:364,compReg:346,p1:18,avgComp:91,avgBef:86.5},
+  {n:"SC MSC KEMANG",ron:1823,reg:1815,comp:1359,compReg:1351,p1:7,avgComp:339.75,avgBef:337.75},
+  {n:"SC MSC SBY GWALK",ron:196,reg:181,comp:172,compReg:157,p1:14,avgComp:57.33,avgBef:52.33},
+  {n:"SC MSC SBY MAYJEND",ron:197,reg:190,comp:136,compReg:129,p1:7,avgComp:34,avgBef:32.25},
+  {n:"SC MSC SURYO",ron:878,reg:835,comp:741,compReg:699,p1:41,avgComp:185.25,avgBef:174.75},
+  {n:"SC PALEMBANG",ron:297,reg:297,comp:218,compReg:218,p1:0,avgComp:54.5,avgBef:54.5},
+  {n:"SC PEKANBARU",ron:690,reg:687,comp:594,compReg:591,p1:1,avgComp:148.5,avgBef:147.75},
+  {n:"SC PONTIANAK",ron:242,reg:242,comp:179,compReg:179,p1:0,avgComp:44.75,avgBef:44.75},
+  {n:"SC PURWOKERTO",ron:362,reg:339,comp:236,compReg:213,p1:23,avgComp:59,avgBef:53.25},
+  {n:"SC SAMARINDA",ron:446,reg:442,comp:367,compReg:363,p1:2,avgComp:91.75,avgBef:90.75},
+  {n:"SC SEMARANG",ron:376,reg:364,comp:303,compReg:291,p1:12,avgComp:75.75,avgBef:72.75},
+  {n:"SC SOLO",ron:566,reg:554,comp:473,compReg:461,p1:12,avgComp:118.25,avgBef:115.25},
+  {n:"SC SURABAYA",ron:1240,reg:1170,comp:1020,compReg:946,p1:74,avgComp:255,avgBef:236.5},
+  {n:"SC YOGYAKARTA",ron:1004,reg:996,comp:910,compReg:902,p1:7,avgComp:227.5,avgBef:225.5},
+];
+
+function cr(sc){ return sc.comp/sc.ron*100; }
+function fmt(n){ if(n>=1000000) return 'Rp '+(n/1000000).toFixed(2)+'Jt'; if(n>=1000) return 'Rp '+(n/1000).toFixed(0)+'K'; return 'Rp '+Math.round(n).toLocaleString('id-ID'); }
+function badgeCR(v){ if(v>=80) return '<span class="badge g">✓ '+v.toFixed(1)+'%</span>'; if(v>=70) return '<span class="badge y">⚠ '+v.toFixed(1)+'%</span>'; return '<span class="badge r">✗ '+v.toFixed(1)+'%</span>'; }
+function barHtml(v,max,color){ return `<div class="bar-wrap"><div class="bar" style="width:${Math.min(100,(v/max)*100).toFixed(0)}%;background:${color}"></div></div>`; }
+
+// TAB 1 TABLE
+function filterTable(){
+  const q = document.getElementById('search-sc').value.toLowerCase();
+  const sortBy = document.getElementById('sort-by').value;
+  let data = SC.filter(d => d.n.toLowerCase().includes(q));
+  if(sortBy==='ron') data.sort((a,b)=>b.ron-a.ron);
+  else if(sortBy==='closing') data.sort((a,b)=>cr(b)-cr(a));
+  else if(sortBy==='complete') data.sort((a,b)=>b.comp-a.comp);
+  else if(sortBy==='1p1') data.sort((a,b)=>b.p1-a.p1);
+  const maxRON = Math.max(...SC.map(d=>d.ron));
+  const tbody = document.getElementById('main-tbody');
+  tbody.innerHTML = data.map(d => {
+    const rate = cr(d);
+    const gap = rate - 80;
+    return `<tr>
+      <td style="font-weight:600;font-size:11px">${d.n.replace('SERVICE CENTER ','').replace('SC ','SC ')}</td>
+      <td>${d.ron.toLocaleString('id-ID')}${barHtml(d.ron,maxRON,'#c45c1a')}</td>
+      <td>${d.comp.toLocaleString('id-ID')}</td>
+      <td>${badgeCR(rate)}</td>
+      <td><span class="badge ${gap>=0?'g':'r'}">${gap>=0?'+':''}<b>${gap.toFixed(1)}</b>pp</span></td>
+      <td>${d.p1>0?d.p1:'—'}</td>
+      <td>${d.avgComp.toFixed(0)}/bln</td>
+      <td>${rate>=80?'<span class="badge g">Target ✓</span>':'<span class="badge r">Perlu Push</span>'}</td>
+    </tr>`;
+  }).join('') + `<tr><td>TOTAL / AVG</td><td>${SC.reduce((a,d)=>a+d.ron,0).toLocaleString('id-ID')}</td><td>${SC.reduce((a,d)=>a+d.comp,0).toLocaleString('id-ID')}</td><td>${badgeCR(SC.reduce((a,d)=>a+d.comp,0)/SC.reduce((a,d)=>a+d.ron,0)*100)}</td><td>—</td><td>${SC.reduce((a,d)=>a+d.p1,0)}</td><td>${(SC.reduce((a,d)=>a+d.avgComp,0)/SC.length).toFixed(0)}/bln</td><td>—</td></tr>`;
+}
+
+// TAB 2 SC
+function initSCSelect(){
+  const sel = document.getElementById('sc-select');
+  SC.sort((a,b)=>b.ron-a.ron).forEach(d=>{
+    const o=document.createElement('option');
+    o.value=d.n; o.textContent=d.n.replace('SERVICE CENTER ','');
+    sel.appendChild(o);
+  });
+}
+function renderSC(){
+  const name = document.getElementById('sc-select').value;
+  if(!name) return;
+  const d = SC.find(s=>s.n===name);
+  const rate = cr(d);
+  document.getElementById('sc-kpi-cards').innerHTML = `
+    <div class="kpi-card ${rate>=80?'kpi-ok':rate>=70?'kpi-warn':'kpi-bad'}">
+      <div class="kpi-title">Closing Rate</div>
+      <div class="kpi-val" style="color:${rate>=80?'#16a34a':rate>=70?'#d97706':'#dc2626'}">${rate.toFixed(1)}%</div>
+      <div class="kpi-target">Target 2026: ≥ 80%  |  ${rate>=80?'✅ Tercapai':'❌ Gap: '+(80-rate).toFixed(1)+'pp'}</div>
+    </div>
+    <div class="kpi-card kpi-ok">
+      <div class="kpi-title">RON 1Plus1</div>
+      <div class="kpi-val" style="color:#7c3aed">${d.p1}</div>
+      <div class="kpi-target">dari ${d.ron} total RON (${(d.p1/d.ron*100).toFixed(1)}%)</div>
+    </div>
+    <div class="kpi-card kpi-ok">
+      <div class="kpi-title">Avg RON Complete/bln</div>
+      <div class="kpi-val" style="color:#1a3a5c">${d.avgComp.toFixed(0)}</div>
+      <div class="kpi-target">sebelum 1Plus1: ${d.avgBef.toFixed(0)}/bln</div>
+    </div>
+    <div class="kpi-card ${d.p1>0?'kpi-ok':'kpi-warn'}">
+      <div class="kpi-title">Dampak 1Plus1</div>
+      <div class="kpi-val" style="color:#c45c1a">+${(d.avgComp-d.avgBef).toFixed(1)}</div>
+      <div class="kpi-target">tambahan RON/bln dari aktivitas 1Plus1</div>
+    </div>
+  `;
+  document.getElementById('sc-detail-card').innerHTML = `
+    <div class="card-title"><div class="dot" style="background:#1a3a5c"></div>${d.n}</div>
+    <div class="inc-row"><span class="inc-lbl">Total RON diterima (4 bln)</span><span class="inc-val">${d.ron.toLocaleString('id-ID')}</span></div>
+    <div class="inc-row"><span class="inc-lbl">Total RON Regular</span><span class="inc-val">${d.reg.toLocaleString('id-ID')}</span></div>
+    <div class="inc-row"><span class="inc-lbl">Total RON Complete</span><span class="inc-val">${d.comp.toLocaleString('id-ID')}</span></div>
+    <div class="inc-row"><span class="inc-lbl">RON 1Plus1</span><span class="inc-val">${d.p1}</span></div>
+    <div class="inc-row"><span class="inc-lbl">Closing Rate</span><span class="inc-val">${rate.toFixed(2)}%</span></div>
+    <div class="inc-row"><span class="inc-lbl">Avg complete/bln</span><span class="inc-val">${d.avgComp.toFixed(1)}</span></div>
+    <div class="inc-row"><span class="inc-lbl">Avg complete sebelum 1Plus1</span><span class="inc-val">${d.avgBef.toFixed(1)}</span></div>
+    <div style="margin-top:10px;padding:10px;border-radius:8px;background:${rate>=80?'#f0fdf4':'#fff1f2'};font-size:11px;font-weight:600;color:${rate>=80?'#166534':'#dc2626'}">
+      KPI 2026: ${rate>=80?`✅ Sudah memenuhi target 80% (actual ${rate.toFixed(1)}%)`:`❌ Masih kurang ${(80-rate).toFixed(1)}pp dari target 80%`}
+    </div>
+  `;
+  // SC incentive sim
+  const avgRONbln = d.avgComp;
+  const lightPct=0.40,medPct=0.35,heavyPct=0.20,surveyPct=0.05;
+  const incWO = avgRONbln*(surveyPct*1000+lightPct*6000+medPct*6000+heavyPct*15000);
+  const incKKS = avgRONbln*0.15*350000*0.10;
+  const total = incWO+incKKS;
+  const tekPerSC = d.avgComp > 300 ? 8 : d.avgComp > 100 ? 5 : 3;
+  document.getElementById('sc-incentive-sim').style.display='block';
+  document.getElementById('sc-inc-content').innerHTML = `
+    <div class="grid3">
+      <div class="stat-box"><div class="stat-val" style="color:#c45c1a">${fmt(incWO)}</div><div class="stat-lbl">Incentive dari WO/bln</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:#16a34a">${fmt(incKKS)}</div><div class="stat-lbl">Incentive dari KKS (est.)/bln</div></div>
+      <div class="stat-box"><div class="stat-val" style="color:#1a3a5c">${fmt(total/tekPerSC)}</div><div class="stat-lbl">Per teknisi/bln (est. ${tekPerSC} tek)</div></div>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:#64748b">*Asumsi: 40% Light, 35% Medium, 20% Heavy, 5% Survey. KKS closing rate 15% × Rp 350K × 10% commission. Jumlah teknisi estimasi berdasarkan volume.</div>
+  `;
+}
+
+// TAB 3 INCENTIVE
+function calcInc(){
+  const lp=+document.getElementById('r-light').value/100;
+  const mp=+document.getElementById('r-medium').value/100;
+  const hp=+document.getElementById('r-heavy').value/100;
+  const sp=+document.getElementById('r-survey').value/100;
+  const kksP=+document.getElementById('n-kks-price').value;
+  const kksR=+document.getElementById('r-kks-rate').value/100;
+  const tekPerSC=+document.getElementById('r-tek-per-sc').value;
+
+  document.getElementById('v-light').textContent=Math.round(lp*100)+'%';
+  document.getElementById('v-medium').textContent=Math.round(mp*100)+'%';
+  document.getElementById('v-heavy').textContent=Math.round(hp*100)+'%';
+  document.getElementById('v-survey').textContent=Math.round(sp*100)+'%';
+  document.getElementById('v-kks-rate').textContent=Math.round(kksR*100)+'%';
+  document.getElementById('v-tek-per-sc').textContent=tekPerSC;
+
+  const totalRONbln = SC.reduce((a,d)=>a+d.avgComp,0);
+  const incWOper1 = sp*1000+lp*6000+mp*6000+hp*15000;
+  const incWOtotal = totalRONbln*incWOper1;
+  const incKKStotal = totalRONbln*kksR*kksP*0.10;
+  const totalInc = incWOtotal+incKKStotal;
+  const perTek = totalInc/(SC.length*tekPerSC);
+
+  document.getElementById('inc-result').innerHTML = `
+    <div class="inc-row"><span class="inc-lbl">Avg incentive per WO</span><span class="inc-val">${fmt(incWOper1)}</span></div>
+    <div class="inc-row"><span class="inc-lbl">Total RON complete/bln (nasional)</span><span class="inc-val">${totalRONbln.toFixed(0)}</span></div>
+    <div class="inc-row"><span class="inc-lbl">Total incentive WO/bln</span><span class="inc-val" style="color:#c45c1a">${fmt(incWOtotal)}</span></div>
+    <div class="inc-row"><span class="inc-lbl">Total incentive KKS/bln</span><span class="inc-val" style="color:#16a34a">${fmt(incKKStotal)}</span></div>
+    <div class="inc-row" style="padding-top:8px;border-top:2px solid #e2e8f0"><span class="inc-lbl" style="font-weight:700">Total incentive/bln</span><span class="inc-val" style="font-size:16px;color:#1a3a5c">${fmt(totalInc)}</span></div>
+    <div class="inc-row"><span class="inc-lbl">Per teknisi/bln (${SC.length}SC × ${tekPerSC} tek)</span><span class="inc-val" style="color:${perTek>325000?'#16a34a':'#dc2626'}">${fmt(perTek)}</span></div>
+    <div style="margin-top:8px;padding:8px;border-radius:8px;background:${perTek>=325000?'#f0fdf4':'#fff1f2'};font-size:11px;font-weight:600;color:${perTek>=325000?'#166534':'#dc2626'}">
+      ${perTek>=325000?`✅ Di atas existing (Rp 325K) · +${fmt(perTek-325000)}/teknisi`:`⚠️ Di bawah existing (Rp 325K) · -${fmt(325000-perTek)}/teknisi`}
+    </div>
+  `;
+
+  const maxAvg = Math.max(...SC.map(d=>d.avgComp));
+  document.getElementById('inc-tbody').innerHTML = SC.sort((a,b)=>b.avgComp-a.avgComp).map(d=>{
+    const incWO = d.avgComp*incWOper1;
+    const incKKS = d.avgComp*kksR*kksP*0.10;
+    const total = incWO+incKKS;
+    const perTekSC = total/tekPerSC;
+    const diff = perTekSC-325000;
+    return `<tr>
+      <td style="font-size:10px;font-weight:600">${d.n.replace('SERVICE CENTER ','')}</td>
+      <td>${d.avgComp.toFixed(0)}${barHtml(d.avgComp,maxAvg,'#c45c1a')}</td>
+      <td>${fmt(incWO)}</td>
+      <td>${fmt(incKKS)}</td>
+      <td style="font-weight:700">${fmt(perTekSC)}</td>
+      <td><span class="badge ${diff>=0?'g':'r'}">${diff>=0?'+':''}<b>${fmt(Math.abs(diff))}</b></span></td>
+    </tr>`;
+  }).join('');
+}
+
+// TAB 4 KPI 2026
+function calcKPI2026(){
+  const samedayAct = +document.getElementById('r-sameday-sim').value;
+  const rtatAct = +document.getElementById('r-rtat-sim').value;
+  const pendingAct = +document.getElementById('r-pending-sim').value;
+
+  document.getElementById('v-sameday-sim').textContent=samedayAct+'%';
+  document.getElementById('v-rtat-sim').textContent=rtatAct.toFixed(1);
+  document.getElementById('v-pending-sim').textContent=pendingAct+'%';
+
+  const crNasional = SC.reduce((a,d)=>a+d.comp,0)/SC.reduce((a,d)=>a+d.ron,0)*100;
+
+  const kpis = [
+    {label:'RTAT',actual:rtatAct.toFixed(2),target:'≤ 2.35 hari',ok:rtatAct<=2.35,unit:'hari',lower:true},
+    {label:'Sameday Repair',actual:samedayAct,target:'≥ 35%',ok:samedayAct>=35,unit:'%',lower:false},
+    {label:'Closing Rate',actual:crNasional.toFixed(1),target:'≥ 80%',ok:crNasional>=80,unit:'%',lower:false},
+    {label:'Pending Rate',actual:pendingAct,target:'≤ 15%',ok:pendingAct<=15,unit:'%',lower:true},
+  ];
+
+  document.getElementById('kpi2026-cards').innerHTML = kpis.map(k=>`
+    <div class="kpi-card ${k.ok?'kpi-ok':'kpi-bad'}">
+      <div class="kpi-title">${k.label}</div>
+      <div class="kpi-val" style="color:${k.ok?'#16a34a':'#dc2626'}">${k.actual}${k.unit}</div>
+      <div class="kpi-target">Target: ${k.target}</div>
+      <div style="margin-top:6px"><span class="badge ${k.ok?'g':'r'}">${k.ok?'✅ Tercapai':'❌ Belum'}</span></div>
+    </div>
+  `).join('');
+
+  const above = SC.filter(d=>cr(d)>=80).sort((a,b)=>cr(b)-cr(a));
+  const below = SC.filter(d=>cr(d)<80).sort((a,b)=>cr(a)-cr(b));
+
+  document.getElementById('sc-above-target').innerHTML = above.map(d=>`<div style="padding:2px 0">${d.n.replace('SERVICE CENTER ','')} — <b>${cr(d).toFixed(1)}%</b></div>`).join('');
+  document.getElementById('sc-below-target').innerHTML = below.map(d=>`<div style="padding:2px 0">${d.n.replace('SERVICE CENTER ','')} — <b>${cr(d).toFixed(1)}%</b> (gap: ${(80-cr(d)).toFixed(1)}pp)</div>`).join('');
+
+  document.getElementById('rec-alignment').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="background:#f0fdf4;border-radius:8px;padding:10px;border-left:3px solid #16a34a;font-size:11px">
+        <strong style="color:#166534">💡 Closing Rate sudah ${crNasional.toFixed(1)}% — sudah di atas target 80%</strong><br>
+        Nasional sudah aman. Fokus push SC yang masih di bawah (${below.length} SC). Incentive skema existing perlu dikaitkan dengan achievement closing rate minimal 80% agar teknisi terdorong.
+      </div>
+      <div style="background:#fefce8;border-radius:8px;padding:10px;border-left:3px solid #eab308;font-size:11px">
+        <strong style="color:#854d0e">⚡ Saran: Link KKS Sell-Out dengan Closing Rate</strong><br>
+        Saat ini incentive KKS flat 10%. Rekomendasikan: jika closing rate SC ≥ 80%, commission KKS naik ke 12%. Ini align incentive dengan KPI 2026.
+      </div>
+      <div style="background:#eff6ff;border-radius:8px;padding:10px;border-left:3px solid #1d4ed8;font-size:11px">
+        <strong style="color:#1e40af">📊 RTAT & Sameday — Perlu tracking di GCCS</strong><br>
+        RTAT target 2.35 hari dan Sameday ≥ 35% harus di-track per RON di GCCS. Usul: tambahkan bonus sameday Rp 5.000–10.000 per WO yang selesai ≤ 1 hari. Ini mendorong perilaku tanpa mengubah struktur incentive besar.
+      </div>
+      <div style="background:#fdf4ff;border-radius:8px;padding:10px;border-left:3px solid #7c3aed;font-size:11px">
+        <strong style="color:#6b21a8">🎯 SC yang perlu prioritas coaching</strong><br>
+        ${below.map(d=>`<b>${d.n.replace('SERVICE CENTER ','')} (${cr(d).toFixed(1)}%)</b>`).join(', ')}
+      </div>
+    </div>
+  `;
+}
+
+function switchTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  const tabs=['overview','sc','incentive','kpi2026'];
+  document.querySelectorAll('.tab')[tabs.indexOf(id)].classList.add('active');
+  document.getElementById('sec-'+id).classList.add('active');
+}
+
+initSCSelect();
+filterTable();
+calcInc();
+calcKPI2026();
+</script>
+</body>
+</html>
